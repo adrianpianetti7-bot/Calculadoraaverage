@@ -1082,7 +1082,7 @@ async function aiSend(){
       contents:aiHistory,
       generationConfig:{maxOutputTokens:800,temperature:0.7}
     };
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
     thinking.remove();
     const reply=d.candidates?.[0]?.content?.parts?.[0]?.text||d.error?.message||'Sin respuesta';
