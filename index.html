@@ -277,6 +277,10 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
     <button class="add-tab ext" id="addExt" title="Activo fuera de Trading 212">EXT</button>
   </div>
   <div class="tb-actions">
+    <button id="t212Btn" title="Instrumentos Trading 212" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;border:1px solid #00b4a0;color:#00b4a0;background:none;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;cursor:pointer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      T212
+    </button>
     <a href="https://es.tradingview.com/chart/wB9lfv80/" target="_blank" rel="noopener" title="Abrir TradingView" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;padding:5px 10px;border-radius:6px;border:1px solid #2962ff;color:#2962ff;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       TRADINGVIEW
@@ -292,6 +296,26 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
 
 <div id="tabContent"></div>
 
+<div class="moverlay" id="t212Modal" hidden>
+  <div class="modal" style="max-width:700px;width:95vw">
+    <div class="mhdr"><span class="mtitle">Instrumentos Trading 212</span><button class="mclose" id="t212Close">×</button></div>
+    <div class="mbody" style="padding:0">
+      <div style="padding:14px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--brd)">
+        <input id="t212Search" type="search" placeholder="Buscar por nombre o ticker…" style="flex:1;min-width:160px;padding:7px 10px;border-radius:6px;border:1px solid var(--brd);background:var(--bg2);color:var(--fg);font-size:13px">
+        <select id="t212Filter" style="padding:7px 10px;border-radius:6px;border:1px solid var(--brd);background:var(--bg2);color:var(--fg);font-size:13px">
+          <option value="">Todos</option>
+          <option value="STOCK">Acciones</option>
+          <option value="ETF">ETFs</option>
+          <option value="CRYPTOCURRENCY">Cripto</option>
+        </select>
+        <button id="t212Load" class="bp" style="white-space:nowrap">Cargar lista</button>
+      </div>
+      <div id="t212Status" style="padding:12px 16px;font-size:13px;color:var(--fg2)">Configurá tu T212 API key en ⚙️ Configuración, luego tocá "Cargar lista".</div>
+      <div id="t212List" style="max-height:420px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+
 <div class="moverlay" id="settModal" hidden>
   <div class="modal">
     <div class="mhdr"><span class="mtitle">Configuración</span><button class="mclose" id="mClose">×</button></div>
@@ -301,6 +325,16 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
         <div class="nstat"><div class="ndot" id="ndot"></div><span id="ntxt">Verificando…</span></div>
         <button class="bs" id="reqNotif" style="width:100%">Activar notificaciones</button>
         <p class="hint" style="margin-top:8px">Alertas de escritorio mientras la página esté abierta. Para alertas cuando la página está cerrada, configurá emails abajo.</p>
+      </div>
+      <div class="msec">
+        <h3>Trading 212 API (Beta)</h3>
+        <div class="ejinfo">
+          Settings → API (Beta) → Generate key<br>
+          Permisos necesarios: <strong>Metadata, Portfolio, History</strong>
+        </div>
+        <div class="ff"><label>T212 API Key</label><input type="text" id="cT212" placeholder="tu_key_aqui" autocomplete="off"></div>
+        <div class="sact"><button class="bp" id="saveT212key">Guardar key</button><button class="bs" id="testT212key">Probar conexión</button></div>
+        <div id="t212KeyResult" style="margin-top:8px;font-size:12px;color:var(--fg2)"></div>
       </div>
       <div class="msec">
         <h3>Precios acciones / ETFs / índices — Twelve Data</h3>
@@ -913,7 +947,7 @@ function updNotif(){
 }
 
 /* ═══ SETTINGS ═══ */
-function openSett(){$('cEmail').value=S.cfg.email||'';$('cPK').value=S.cfg.pk||'';$('cSvc').value=S.cfg.svc||'';$('cTpl').value=S.cfg.tpl||'';$('cTD').value=S.cfg.tdKey||'';updNotif();$('settModal').hidden=false}
+function openSett(){$('cEmail').value=S.cfg.email||'';$('cPK').value=S.cfg.pk||'';$('cSvc').value=S.cfg.svc||'';$('cTpl').value=S.cfg.tpl||'';$('cTD').value=S.cfg.tdKey||'';$('cT212').value=S.cfg.t212Key||'';updNotif();$('settModal').hidden=false}
 $('settBtn').addEventListener('click',openSett);
 $('mClose').addEventListener('click',()=>$('settModal').hidden=true);
 $('settModal').addEventListener('click',e=>{if(e.target===$('settModal'))$('settModal').hidden=true});
@@ -931,6 +965,68 @@ $('saveTD').addEventListener('click',()=>{
   S.cfg={...S.cfg,tdKey:$('cTD').value.trim()};
   save();toast({icon:'✅',cls:'bt',title:'Key guardada',msg:S.cfg.tdKey?'Twelve Data key guardada. Recargando precios…':'Key borrada.'});
   if(S.cfg.tdKey)pollAll();
+});
+
+/* ═══ T212 API ═══ */
+let t212Cache=null;
+async function t212Fetch(path){
+  const k=S.cfg.t212Key;if(!k)return null;
+  const base=`https://live.trading212.com/api/v0${path}`;
+  const opts={headers:{Authorization:k}};
+  try{const r=await fetch(base,opts);if(r.ok)return await r.json();}catch{}
+  // proxy fallback (may not pass auth — last resort)
+  try{const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(base)}`,opts);if(r.ok)return await r.json();}catch{}
+  return null;
+}
+async function loadT212Instruments(){
+  $('t212Status').textContent='Cargando instrumentos…';$('t212List').innerHTML='';
+  const data=await t212Fetch('/equity/metadata/instruments');
+  if(!data){$('t212Status').textContent='❌ Error: verificá la key o la conexión.';return;}
+  t212Cache=Array.isArray(data)?data:[];
+  renderT212(($('t212Search').value||'').toLowerCase(),$('t212Filter').value);
+}
+function renderT212(q,type){
+  if(!t212Cache){$('t212Status').textContent='Tocá "Cargar lista" primero.';return;}
+  let list=t212Cache;
+  if(type)list=list.filter(x=>x.type===type);
+  if(q)list=list.filter(x=>(x.shortName||'').toLowerCase().includes(q)||(x.name||'').toLowerCase().includes(q));
+  $('t212Status').textContent=`${list.length.toLocaleString()} instrumentos`;
+  const rows=list.slice(0,200).map(x=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--brd);font-size:13px">
+      <div style="min-width:80px;font-weight:700;color:var(--acc)">${x.shortName||x.ticker||''}</div>
+      <div style="flex:1;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.name||''}">${x.name||''}</div>
+      <div style="min-width:50px;font-size:11px;color:var(--fg2)">${x.type||''}</div>
+      <div style="min-width:40px;font-size:11px;color:var(--fg2)">${x.currencyCode||''}</div>
+      <button onclick="addFromT212('${(x.shortName||x.ticker||'').replace(/'/g,"\\'")}','${(x.name||'').replace(/'/g,"\\'")}','${x.type||''}','${x.currencyCode||''}')" style="padding:3px 8px;border-radius:4px;border:1px solid var(--acc);color:var(--acc);background:none;cursor:pointer;font-size:11px;white-space:nowrap">+ Agregar</button>
+    </div>`).join('');
+  $('t212List').innerHTML=rows+(list.length>200?`<div style="padding:10px 16px;font-size:12px;color:var(--fg2)">Mostrando 200 de ${list.length}. Refiná la búsqueda.</div>`:'');
+}
+function addFromT212(sym,name,type,currency){
+  addTab('t212');
+  const tab=S.tabs[S.tabs.length-1];
+  tab.asset={symbol:sym,name:`${name} (${currency})`,type:type,exchange:'T212',cgId:null};
+  save();render();startPoll();
+  $('t212Modal').hidden=true;
+  toast({icon:'✅',cls:'bt',title:'Agregado',msg:`${sym} agregado como nueva pestaña.`});
+}
+$('t212Btn').addEventListener('click',()=>{$('t212Modal').hidden=false;if(!S.cfg.t212Key)$('t212Status').textContent='Configurá tu T212 API key en ⚙️ Configuración, luego tocá "Cargar lista".';});
+$('t212Close').addEventListener('click',()=>$('t212Modal').hidden=true);
+$('t212Modal').addEventListener('click',e=>{if(e.target===$('t212Modal'))$('t212Modal').hidden=true});
+$('t212Load').addEventListener('click',loadT212Instruments);
+$('t212Search').addEventListener('input',()=>renderT212($('t212Search').value.toLowerCase(),$('t212Filter').value));
+$('t212Filter').addEventListener('change',()=>renderT212(($('t212Search').value||'').toLowerCase(),$('t212Filter').value));
+$('saveT212key').addEventListener('click',()=>{
+  S.cfg={...S.cfg,t212Key:$('cT212').value.trim()};
+  save();toast({icon:'✅',cls:'bt',title:'Key guardada',msg:'T212 key guardada.'});
+});
+$('testT212key').addEventListener('click',async()=>{
+  const k=$('cT212').value.trim();if(!k){$('t212KeyResult').textContent='Ingresá la key primero.';return;}
+  $('t212KeyResult').textContent='Probando…';
+  const old=S.cfg.t212Key;S.cfg.t212Key=k;
+  const d=await t212Fetch('/equity/account/info');
+  S.cfg.t212Key=old;
+  if(d){$('t212KeyResult').style.color='#2d9';$('t212KeyResult').textContent=`✅ Conectado`;}
+  else{$('t212KeyResult').style.color='#f66';$('t212KeyResult').textContent=`❌ Error — verificá la key o CORS`;}
 });
 $('saveSett').addEventListener('click',()=>{
   S.cfg={...S.cfg,email:$('cEmail').value.trim(),pk:$('cPK').value.trim(),svc:$('cSvc').value.trim(),tpl:$('cTpl').value.trim()};
