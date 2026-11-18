@@ -277,20 +277,12 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
     <button class="add-tab ext" id="addExt" title="Activo fuera de Trading 212">EXT</button>
   </div>
   <div class="tb-actions">
-    <button id="t212Btn" title="Instrumentos Trading 212" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;border:1px solid #00b4a0;color:#00b4a0;background:none;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;cursor:pointer">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      T212
-    </button>
     <a href="https://es.tradingview.com/chart/wB9lfv80/" target="_blank" rel="noopener" title="Abrir TradingView" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;padding:5px 10px;border-radius:6px;border:1px solid #2962ff;color:#2962ff;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       TRADINGVIEW
     </a>
     <button class="icon-btn" id="notifBtn" title="Notificaciones">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-    </button>
-    <button id="aiChatBtn" title="Research AI" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;border:1px solid #a855f7;color:#a855f7;background:none;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;cursor:pointer">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      AI
     </button>
     <button class="icon-btn" id="settBtn" title="Configuración">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -300,37 +292,6 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
 
 <div id="tabContent"></div>
 
-<div id="aiPanel" hidden style="position:fixed;bottom:0;right:0;width:380px;max-width:100vw;height:520px;max-height:90vh;background:var(--bg);border:1px solid var(--brd);border-radius:12px 12px 0 0;display:flex;flex-direction:column;z-index:200;box-shadow:0 -4px 24px rgba(0,0,0,.3)">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--brd)">
-    <span style="font-weight:700;font-size:13px;color:#a855f7">✦ Research AI — T212</span>
-    <button id="aiClose" style="background:none;border:none;color:var(--fg2);font-size:18px;cursor:pointer;line-height:1">×</button>
-  </div>
-  <div id="aiMessages" style="flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;font-size:13px"></div>
-  <div style="padding:10px 14px;border-top:1px solid var(--brd);display:flex;gap:8px">
-    <input id="aiInput" type="text" placeholder="Ej: activos expuestos al oro…" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--brd);background:var(--bg2);color:var(--fg);font-size:13px" autocomplete="off">
-    <button id="aiSend" style="padding:8px 14px;border-radius:8px;border:none;background:#a855f7;color:#fff;font-weight:700;cursor:pointer;font-size:13px">↑</button>
-  </div>
-</div>
-
-<div class="moverlay" id="t212Modal" hidden>
-  <div class="modal" style="max-width:700px;width:95vw">
-    <div class="mhdr"><span class="mtitle">Instrumentos Trading 212</span><button class="mclose" id="t212Close">×</button></div>
-    <div class="mbody" style="padding:0">
-      <div style="padding:14px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--brd)">
-        <input id="t212Search" type="search" placeholder="Buscar por nombre o ticker…" style="flex:1;min-width:160px;padding:7px 10px;border-radius:6px;border:1px solid var(--brd);background:var(--bg2);color:var(--fg);font-size:13px">
-        <select id="t212Filter" style="padding:7px 10px;border-radius:6px;border:1px solid var(--brd);background:var(--bg2);color:var(--fg);font-size:13px">
-          <option value="">Todos</option>
-          <option value="STOCK">Acciones</option>
-          <option value="ETF">ETFs</option>
-          <option value="CRYPTOCURRENCY">Cripto</option>
-        </select>
-        <button id="t212Load" class="bp" style="white-space:nowrap">Cargar lista</button>
-      </div>
-      <div id="t212Status" style="padding:12px 16px;font-size:13px;color:var(--fg2)">Configurá tu T212 API key en ⚙️ Configuración, luego tocá "Cargar lista".</div>
-      <div id="t212List" style="max-height:420px;overflow-y:auto"></div>
-    </div>
-  </div>
-</div>
 
 <div class="moverlay" id="settModal" hidden>
   <div class="modal">
@@ -341,26 +302,6 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
         <div class="nstat"><div class="ndot" id="ndot"></div><span id="ntxt">Verificando…</span></div>
         <button class="bs" id="reqNotif" style="width:100%">Activar notificaciones</button>
         <p class="hint" style="margin-top:8px">Alertas de escritorio mientras la página esté abierta. Para alertas cuando la página está cerrada, configurá emails abajo.</p>
-      </div>
-      <div class="msec">
-        <h3>Research AI — Google Gemini</h3>
-        <div class="ejinfo">
-          1. Andá a <strong>aistudio.google.com/apikey</strong><br>
-          2. "Create API key" → copiá y pegá abajo<br>
-          Gratis, sin tarjeta. Permite el chat AI de la app.
-        </div>
-        <div class="ff"><label>Gemini API Key</label><input type="text" id="cGemini" placeholder="AIza…" autocomplete="off"></div>
-        <div class="sact"><button class="bp" id="saveGemini">Guardar key</button></div>
-      </div>
-      <div class="msec">
-        <h3>Trading 212 API (Beta)</h3>
-        <div class="ejinfo">
-          Settings → API (Beta) → Generate key<br>
-          Permisos necesarios: <strong>Metadata, Portfolio, History</strong>
-        </div>
-        <div class="ff"><label>T212 API Key</label><input type="text" id="cT212" placeholder="tu_key_aqui" autocomplete="off"></div>
-        <div class="sact"><button class="bp" id="saveT212key">Guardar key</button><button class="bs" id="testT212key">Probar conexión</button></div>
-        <div id="t212KeyResult" style="margin-top:8px;font-size:12px;color:var(--fg2)"></div>
       </div>
       <div class="msec">
         <h3>Precios acciones / ETFs / índices — Twelve Data</h3>
@@ -973,7 +914,7 @@ function updNotif(){
 }
 
 /* ═══ SETTINGS ═══ */
-function openSett(){$('cEmail').value=S.cfg.email||'';$('cPK').value=S.cfg.pk||'';$('cSvc').value=S.cfg.svc||'';$('cTpl').value=S.cfg.tpl||'';$('cTD').value=S.cfg.tdKey||'';$('cT212').value=S.cfg.t212Key||'';$('cGemini').value=S.cfg.geminiKey||'';updNotif();$('settModal').hidden=false}
+function openSett(){$('cEmail').value=S.cfg.email||'';$('cPK').value=S.cfg.pk||'';$('cSvc').value=S.cfg.svc||'';$('cTpl').value=S.cfg.tpl||'';$('cTD').value=S.cfg.tdKey||'';updNotif();$('settModal').hidden=false}
 $('settBtn').addEventListener('click',openSett);
 $('mClose').addEventListener('click',()=>$('settModal').hidden=true);
 $('settModal').addEventListener('click',e=>{if(e.target===$('settModal'))$('settModal').hidden=true});
@@ -993,126 +934,7 @@ $('saveTD').addEventListener('click',()=>{
   if(S.cfg.tdKey)pollAll();
 });
 
-/* ═══ T212 API ═══ */
-let t212Cache=null;
-async function t212Fetch(path){
-  const k=S.cfg.t212Key;if(!k)return null;
-  const base=`https://live.trading212.com/api/v0${path}`;
-  const opts={headers:{Authorization:k}};
-  try{const r=await fetch(base,opts);if(r.ok)return await r.json();}catch{}
-  // proxy fallback (may not pass auth — last resort)
-  try{const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(base)}`,opts);if(r.ok)return await r.json();}catch{}
-  return null;
-}
-async function loadT212Instruments(){
-  $('t212Status').textContent='Cargando instrumentos…';$('t212List').innerHTML='';
-  const data=await t212Fetch('/equity/metadata/instruments');
-  if(!data){$('t212Status').textContent='❌ Error: verificá la key o la conexión.';return;}
-  t212Cache=Array.isArray(data)?data:[];
-  renderT212(($('t212Search').value||'').toLowerCase(),$('t212Filter').value);
-}
-function renderT212(q,type){
-  if(!t212Cache){$('t212Status').textContent='Tocá "Cargar lista" primero.';return;}
-  let list=t212Cache;
-  if(type)list=list.filter(x=>x.type===type);
-  if(q)list=list.filter(x=>(x.shortName||'').toLowerCase().includes(q)||(x.name||'').toLowerCase().includes(q));
-  $('t212Status').textContent=`${list.length.toLocaleString()} instrumentos`;
-  const rows=list.slice(0,200).map(x=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--brd);font-size:13px">
-      <div style="min-width:80px;font-weight:700;color:var(--acc)">${x.shortName||x.ticker||''}</div>
-      <div style="flex:1;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.name||''}">${x.name||''}</div>
-      <div style="min-width:50px;font-size:11px;color:var(--fg2)">${x.type||''}</div>
-      <div style="min-width:40px;font-size:11px;color:var(--fg2)">${x.currencyCode||''}</div>
-      <button onclick="addFromT212('${(x.shortName||x.ticker||'').replace(/'/g,"\\'")}','${(x.name||'').replace(/'/g,"\\'")}','${x.type||''}','${x.currencyCode||''}')" style="padding:3px 8px;border-radius:4px;border:1px solid var(--acc);color:var(--acc);background:none;cursor:pointer;font-size:11px;white-space:nowrap">+ Agregar</button>
-    </div>`).join('');
-  $('t212List').innerHTML=rows+(list.length>200?`<div style="padding:10px 16px;font-size:12px;color:var(--fg2)">Mostrando 200 de ${list.length}. Refiná la búsqueda.</div>`:'');
-}
-function addFromT212(sym,name,type,currency){
-  addTab('t212');
-  const tab=S.tabs[S.tabs.length-1];
-  tab.asset={symbol:sym,name:`${name} (${currency})`,type:type,exchange:'T212',cgId:null};
-  save();render();startPoll();
-  $('t212Modal').hidden=true;
-  toast({icon:'✅',cls:'bt',title:'Agregado',msg:`${sym} agregado como nueva pestaña.`});
-}
-$('t212Btn').addEventListener('click',()=>{$('t212Modal').hidden=false;if(!S.cfg.t212Key)$('t212Status').textContent='Configurá tu T212 API key en ⚙️ Configuración, luego tocá "Cargar lista".';});
-$('t212Close').addEventListener('click',()=>$('t212Modal').hidden=true);
-$('t212Modal').addEventListener('click',e=>{if(e.target===$('t212Modal'))$('t212Modal').hidden=true});
-$('t212Load').addEventListener('click',loadT212Instruments);
-$('t212Search').addEventListener('input',()=>renderT212($('t212Search').value.toLowerCase(),$('t212Filter').value));
-$('t212Filter').addEventListener('change',()=>renderT212(($('t212Search').value||'').toLowerCase(),$('t212Filter').value));
-/* ═══ GEMINI AI CHAT ═══ */
-$('saveGemini').addEventListener('click',()=>{
-  S.cfg={...S.cfg,geminiKey:$('cGemini').value.trim()};
-  save();toast({icon:'✅',cls:'bt',title:'Key guardada',msg:'Gemini key guardada. Podés usar el chat AI.'});
-});
-let aiHistory=[];
-function aiMsg(role,text){
-  const d=$('aiMessages');
-  const isUser=role==='user';
-  const div=document.createElement('div');
-  div.style.cssText=`align-self:${isUser?'flex-end':'flex-start'};max-width:85%;padding:8px 11px;border-radius:${isUser?'12px 12px 2px 12px':'12px 12px 12px 2px'};background:${isUser?'#a855f7':'var(--bg2)'};color:${isUser?'#fff':'var(--fg)'};white-space:pre-wrap;line-height:1.5`;
-  div.textContent=text;
-  d.appendChild(div);
-  d.scrollTop=d.scrollHeight;
-}
-async function aiSend(){
-  const k=S.cfg.geminiKey;
-  const q=$('aiInput').value.trim();
-  if(!q)return;
-  if(!k){aiMsg('assistant','Configurá tu Gemini API key en ⚙️ Configuración → Research AI.');return;}
-  $('aiInput').value='';
-  aiMsg('user',q);
-  const thinking=document.createElement('div');
-  thinking.style.cssText='align-self:flex-start;padding:8px 11px;border-radius:12px 12px 12px 2px;background:var(--bg2);color:var(--fg2);font-style:italic;font-size:12px';
-  thinking.textContent='Pensando…';
-  $('aiMessages').appendChild(thinking);
-  $('aiMessages').scrollTop=$('aiMessages').scrollHeight;
-  // Build context with T212 instruments if loaded
-  let instrContext='';
-  if(t212Cache&&t212Cache.length){
-    const sample=t212Cache.map(x=>`${x.shortName||x.ticker}|${x.name}|${x.type}`).join('\n');
-    instrContext=`\n\nLista de instrumentos disponibles en Trading 212 (ticker|nombre|tipo):\n${sample}`;
-  }
-  const systemPrompt=`Eres un asistente de research financiero para un inversor que usa Trading 212. Responde en español. Sé conciso y práctico. Cuando el usuario pregunte por activos de un tema específico, indica los tickers relevantes disponibles en T212 si los tenés en contexto. No des consejos de inversión directos.${instrContext}`;
-  aiHistory.push({role:'user',parts:[{text:q}]});
-  try{
-    const body={
-      system_instruction:{parts:[{text:systemPrompt}]},
-      contents:aiHistory,
-      generationConfig:{maxOutputTokens:800,temperature:0.7}
-    };
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d=await r.json();
-    thinking.remove();
-    const reply=d.candidates?.[0]?.content?.parts?.[0]?.text||d.error?.message||'Sin respuesta';
-    aiHistory.push({role:'model',parts:[{text:reply}]});
-    aiMsg('assistant',reply);
-  }catch(e){thinking.remove();aiMsg('assistant',`Error: ${e.message}`);}
-}
-$('aiChatBtn').addEventListener('click',()=>{
-  $('aiPanel').hidden=!$('aiPanel').hidden;
-  if(!$('aiPanel').hidden&&$('aiMessages').children.length===0){
-    aiMsg('assistant','Hola! Soy tu asistente de research. Podés preguntarme cosas como:\n• "Activos expuestos al oro"\n• "ETFs de tecnología disponibles en T212"\n• "Acciones de energías renovables"\n\nSi cargás la lista T212 (botón T212 → Cargar lista), puedo decirte exactamente cuáles tenés disponibles.');
-  }
-});
-$('aiClose').addEventListener('click',()=>$('aiPanel').hidden=true);
-$('aiSend').addEventListener('click',aiSend);
-$('aiInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();aiSend();}});
 
-$('saveT212key').addEventListener('click',()=>{
-  S.cfg={...S.cfg,t212Key:$('cT212').value.trim()};
-  save();toast({icon:'✅',cls:'bt',title:'Key guardada',msg:'T212 key guardada.'});
-});
-$('testT212key').addEventListener('click',async()=>{
-  const k=$('cT212').value.trim();if(!k){$('t212KeyResult').textContent='Ingresá la key primero.';return;}
-  $('t212KeyResult').textContent='Probando…';
-  const old=S.cfg.t212Key;S.cfg.t212Key=k;
-  const d=await t212Fetch('/equity/account/info');
-  S.cfg.t212Key=old;
-  if(d){$('t212KeyResult').style.color='#2d9';$('t212KeyResult').textContent=`✅ Conectado`;}
-  else{$('t212KeyResult').style.color='#f66';$('t212KeyResult').textContent=`❌ Error — verificá la key o CORS`;}
-});
 $('saveSett').addEventListener('click',()=>{
   S.cfg={...S.cfg,email:$('cEmail').value.trim(),pk:$('cPK').value.trim(),svc:$('cSvc').value.trim(),tpl:$('cTpl').value.trim()};
   save();if(S.cfg.pk&&window.emailjs){try{emailjs.init(S.cfg.pk);ejOk=true}catch{}}
