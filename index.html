@@ -340,8 +340,9 @@ body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-ser
 'use strict';
 
 /* ═══ STATE ═══ */
-let S = load() || {tabs:[],active:null,cfg:{email:'',pk:'',svc:'',tpl:''},history:{trades:[],nextId:1}};
+let S = load() || {tabs:[],active:null,cfg:{email:'',pk:'',svc:'',tpl:''},history:{trades:[],nextId:1},portfolio:{items:[],nextId:1}};
 if(!S.history)S.history={trades:[],nextId:1};
+if(!S.portfolio)S.portfolio={items:[],nextId:1};
 let PC = {}; // {symbol: {price,chg,name,type,ts}}
 let pt = null, sti = {}, ejOk = false;
 
@@ -650,6 +651,56 @@ function patchSim(tab){
 }
 
 /* ═══ HISTORY TAB ═══ */
+const PIE_PAL=['#3ECFA0','#818CF8','#FB923C','#F472B6','#34D399','#60A5FA','#FBBF24','#A78BFA','#F87171','#2DD4BF','#E879F9','#4ADE80'];
+
+function drawPie(items){
+  if(!items.length)return`<div style="display:flex;align-items:center;justify-content:center;height:220px;width:220px;border-radius:50%;background:var(--card);border:2px dashed var(--bd);color:var(--muted);font-size:12px;text-align:center;padding:20px">Agregá activos<br>para ver la torta</div>`;
+  const total=items.reduce((s,x)=>s+x.cost,0);
+  if(!total)return'';
+  const R=90,CX=110,CY=110;
+  function arc(start,end){
+    const s={x:CX+R*Math.cos(start),y:CY+R*Math.sin(start)};
+    const e={x:CX+R*Math.cos(end),y:CY+R*Math.sin(end)};
+    if(end-start>=2*Math.PI-0.001)return`<circle cx="${CX}" cy="${CY}" r="${R}" fill="${PIE_PAL[0]}"/>`;
+    return`<path d="M${CX},${CY} L${s.x},${s.y} A${R},${R} 0 ${end-start>Math.PI?1:0} 1 ${e.x},${e.y} Z"/>`;
+  }
+  let angle=-Math.PI/2,paths='';
+  items.forEach((it,i)=>{
+    const sweep=(it.cost/total)*2*Math.PI;
+    paths+=`<path d="M${CX},${CY} L${CX+R*Math.cos(angle)},${CY+R*Math.sin(angle)} A${R},${R} 0 ${sweep>Math.PI?1:0} 1 ${CX+R*Math.cos(angle+sweep)},${CY+R*Math.sin(angle+sweep)} Z" fill="${PIE_PAL[i%PIE_PAL.length]}" stroke="var(--bg)" stroke-width="2"><title>${it.name}: ${((it.cost/total)*100).toFixed(1)}%</title></path>`;
+    angle+=sweep;
+  });
+  return`<svg width="220" height="220" viewBox="0 0 220 220" style="flex-shrink:0">${paths}</svg>`;
+}
+
+function buildPieChart(){
+  const items=S.portfolio.items;
+  const total=items.reduce((s,x)=>s+x.cost,0);
+  const legend=items.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)">
+      <div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${PIE_PAL[i%PIE_PAL.length]}"></div>
+      <div style="flex:1;min-width:0;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${it.name}</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--ac)">${total?((it.cost/total)*100).toFixed(1)+'%':'—'}</div>
+      <div style="font-size:12px;color:var(--muted);min-width:65px;text-align:right">${fu(it.cost)}</div>
+      <button class="pie-del" data-pid="${it.id}" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color .12s" title="Eliminar">×</button>
+    </div>`).join('')||'<p style="font-size:12px;color:var(--muted);padding:8px 0">Agregá activos arriba para ver la distribución.</p>';
+
+  return`<div class="panel" style="margin-bottom:14px">
+    <div class="ph"><span class="ph-t">Distribución del portfolio</span><span class="ph-m">${total?fu(total)+' total':''}</span></div>
+    <div class="pb">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <input id="pieAsset" type="text" placeholder="Nombre del activo (ej: AAPL, BTC…)" style="flex:2;min-width:120px;background:var(--bg);border:1px solid var(--bd);color:var(--fg);border-radius:7px;padding:8px 11px;font-size:13px;font-family:inherit;outline:none" autocomplete="off">
+        <input id="pieAmt" type="number" min="0" step="any" placeholder="$ invertido" style="flex:1;min-width:90px;background:var(--bg);border:1px solid var(--bd);color:var(--fg);border-radius:7px;padding:8px 11px;font-size:13px;font-family:inherit;outline:none;-moz-appearance:textfield">
+        <button id="pieAdd" class="bp" style="white-space:nowrap">+ Agregar</button>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+        <div id="pieSvg">${drawPie(items)}</div>
+        <div style="flex:1;min-width:180px">${legend}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderHistory(){
   const h=S.history;
   const trades=h.trades||[];
@@ -673,7 +724,7 @@ function renderHistory(){
     </tr>`;
   }).join('');
 
-  $('tabContent').innerHTML=`
+  $('tabContent').innerHTML=buildPieChart()+`
     <div class="panel">
       <div class="ph">
         <span class="ph-t">📋 Historial de operaciones</span>
@@ -722,6 +773,24 @@ function renderHistory(){
   wireHistory();
 }
 
+function wirePie(){
+  const addBtn=$('pieAdd');
+  if(addBtn)addBtn.addEventListener('click',()=>{
+    const name=($('pieAsset').value||'').trim();
+    const cost=parseFloat($('pieAmt').value);
+    if(!name||!(cost>0)){if(!name)$('pieAsset').focus();else $('pieAmt').focus();return;}
+    S.portfolio.items.push({id:S.portfolio.nextId++,name,cost});
+    save();renderHistory();
+  });
+  [$('pieAsset'),$('pieAmt')].forEach(el=>{
+    if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('pieAdd')?.click();}});
+  });
+  document.querySelectorAll('.pie-del').forEach(b=>b.addEventListener('click',()=>{
+    S.portfolio.items=S.portfolio.items.filter(x=>x.id!=b.dataset.pid);
+    save();renderHistory();
+  }));
+}
+
 function wireHistory(){
   const sf=$('showForm'),hf=$('histForm'),cb=$('cancelTradeBtn');
   if(sf)sf.addEventListener('click',()=>{hf.style.display=hf.style.display==='none'?'block':'none'});
@@ -760,6 +829,7 @@ function wireHistory(){
     const csv=[header,...rows].join('\n');
     navigator.clipboard.writeText(csv).then(()=>toast({icon:'📋',cls:'bt',title:'CSV copiado',msg:'Pegalo en Google Sheets o Excel.'})).catch(()=>toast({icon:'⚠️',cls:'rt',title:'No se pudo copiar',msg:'Copiá el texto manualmente.'}));
   });
+  wirePie();
 }
 
 /* ═══ DATOS DE PRECIO ═══ */
